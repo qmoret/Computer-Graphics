@@ -1,2 +1,4 @@
 *.o
 volume_render
+*.pdf
+images/.DS_Store

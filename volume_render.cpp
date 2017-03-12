@@ -77,6 +77,7 @@ GLuint g_glslProgram;
 
 /*-------------------- User Control -----------------*/
 float rotationAngle = 0;
+float isoValue = 0.5;
 
 /* -------------------------------------------------------- */
 
@@ -93,6 +94,12 @@ void mainKeyboard(unsigned char key, int x, int y)
     }
     else if (key == '-') {
         rotationAngle -= 0.1;
+    }
+    else if (key == 'p') {
+        isoValue = min(isoValue + 0.1, 1.);
+    }
+    else if (key == 'm') {
+        isoValue = max(isoValue - 0.1, 0.);
     }
 	printf("key '%c' pressed\n",key);
 }
@@ -168,6 +175,8 @@ void mainRender()
 	// Send the user-controled variables
     GLuint rotation = glGetUniformLocation(g_glslProgram, "rotationAngle");
     glUniform1f(rotation, rotationAngle);   
+    GLuint iso = glGetUniformLocation(g_glslProgram, "isoValue");
+    glUniform1f(iso, isoValue);  
 	
 	//--- Geometry ---//
 	// 1rst attribute buffer : vertices

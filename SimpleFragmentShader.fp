@@ -6,6 +6,7 @@ in vec2 fragmentUV;
 // Values that stay constant
 uniform sampler2D myTextureSamplerVolume;
 uniform float rotationAngle;
+uniform float isoValue;
 
 
 // Ouput data
@@ -20,8 +21,8 @@ vec2 slice_coordinate(float z)
       float z2 = z*100.;
 
       //coordinate of the slice
-      float j = floor(z2/10.);
-      float i = floor(z2 - 10.*j);
+      float j = floor(z2 / 10.);
+      float i = floor(mod(z2, 10.));
 
       return vec2(i,j);
 }
@@ -50,12 +51,6 @@ void main()
       // z = 82./100.; //extract 82nd slice
       // pixCoord = pixel_coordinate(x,y,z);
       // color = texture(myTextureSamplerVolume, pixCoord).rgb;
-
-
-
-
-
-
 
 /*     
       //Accumulate all horizontal slices 
@@ -92,6 +87,7 @@ void main()
 
       //Accumulate all vertical slices after rotation by rotationAngle around the z axis
       // float rotationAngle = 1.5;
+/*
       x = fragmentUV.x;
       z = fragmentUV.y;
       color = vec3(0.,0.,0.);
@@ -107,13 +103,29 @@ void main()
         }
       } 
       color /= 256.;
-
-
-/*
-     //Ray marching until density above a threshold (i.e., extract an iso-surface)
-     //...
 */
 
+
+
+      //Ray marching until density above a threshold (i.e., extract an iso-surface)
+      //float isoValue = 0.7;
+
+      x = fragmentUV.x;
+      y = 1.;
+      z = fragmentUV.y;
+      color = vec3(0.,0.,0.);
+
+      pixCoord = pixel_coordinate(x,y,z);
+
+      while (texture(myTextureSamplerVolume, pixCoord).rgb.x < isoValue && y >= 0)
+      {
+        y -= 1./256;
+        pixCoord = pixel_coordinate(x,y,z);
+      }
+      if(y>0)
+      {
+        color = vec3(1.,1.,1.);
+      }
 
 /*
      //Ray marching until density above a threshold, display iso-surface normals
