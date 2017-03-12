@@ -5,6 +5,8 @@ in vec2 fragmentUV;
 
 // Values that stay constant
 uniform sampler2D myTextureSamplerVolume;
+uniform float rotationAngle;
+
 
 // Ouput data
 out vec3 color;
@@ -42,36 +44,69 @@ void main()
       vec2 pixCoord;
       float x,y,z;
 
-      //extract one horizontal slice (x and y vary with fragment coordinates, z is fixed)
-      x = fragmentUV.x;
-      y = fragmentUV.y;
-      z = 82./100.; //extract 82nd slice
-      pixCoord = pixel_coordinate(x,y,z);
-      color = texture(myTextureSamplerVolume, pixCoord).rgb;
+      // //extract one horizontal slice (x and y vary with fragment coordinates, z is fixed)
+      // x = fragmentUV.x;
+      // y = fragmentUV.y;
+      // z = 82./100.; //extract 82nd slice
+      // pixCoord = pixel_coordinate(x,y,z);
+      // color = texture(myTextureSamplerVolume, pixCoord).rgb;
+
+
+
+
+
 
 
 /*     
       //Accumulate all horizontal slices 
-      //...
+      x = fragmentUV.x;
+      y = fragmentUV.y;
+      color = vec3(0.,0.,0.);
+      for (int zindex = 0; zindex<100; zindex++){
+        pixCoord = pixel_coordinate(x,y,zindex/100.);
+        color += texture(myTextureSamplerVolume, pixCoord).rgb;
+      }
+      color /= 100.;
 */
 
 
 /*
       //extract one vertical slice (x and z vary with fragment coordinates, y is fixed)
-      //...
+      x = fragmentUV.x;
+      z = fragmentUV.y;
+      pixCoord = pixel_coordinate(x, 82./256.,z);
+      color = texture(myTextureSamplerVolume, pixCoord).rgb;
 */
-
  
 /*
       //Accumulate all vertical slices 
-      //...
+      x = fragmentUV.x;
+      z = fragmentUV.y;
+      color = vec3(0.,0.,0.);
+      for (int yindex = 0; yindex<256; yindex++){
+        pixCoord = pixel_coordinate(x,yindex/256.,z);
+        color += texture(myTextureSamplerVolume, pixCoord).rgb;
+      }
+      color /= 100.;
 */
 
-
-/*
       //Accumulate all vertical slices after rotation by rotationAngle around the z axis
-      //...
-*/
+      // float rotationAngle = 1.5;
+      x = fragmentUV.x;
+      z = fragmentUV.y;
+      color = vec3(0.,0.,0.);
+      float xrot, yrot;
+      for (int yindex=0; yindex<256; yindex++) {
+        y = yindex/256.;
+        // We center the coordinates, then apply the rotation, and finally translate it back
+        xrot= (x-0.5)*cos(rotationAngle) - sin(rotationAngle)*(y-0.5)+0.5;
+        yrot= (x-0.5)*sin(rotationAngle) + cos(rotationAngle)*(y-0.5)+0.5;
+        pixCoord = pixel_coordinate(xrot,yrot,z);
+        if ((xrot >= 0.) && (yrot >= 0.) && (xrot <= 1.) && (yrot <= 1.)) {
+          color +=  texture(myTextureSamplerVolume, pixCoord).rgb;  
+        }
+      } 
+      color /= 256.;
 
 
 /*

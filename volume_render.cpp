@@ -76,7 +76,7 @@ GLuint textureVolumeID;
 GLuint g_glslProgram;
 
 /*-------------------- User Control -----------------*/
-// ...
+float rotationAngle = 0;
 
 /* -------------------------------------------------------- */
 
@@ -88,7 +88,12 @@ void mainKeyboard(unsigned char key, int x, int y)
 	else if (key == ' ') {
 		printf("spacebar pressed\n");
 	} 
-
+    else if (key == '+') {
+        rotationAngle += 0.1;
+    }
+    else if (key == '-') {
+        rotationAngle -= 0.1;
+    }
 	printf("key '%c' pressed\n",key);
 }
 
@@ -159,11 +164,10 @@ void mainRender()
 	glUniform1i(TexVolumeID, 0); 
 	
 	// Same for the normals, in texture unit 1
-	// ...
-	
+
 	// Send the user-controled variables
-	// ...
-	
+    GLuint rotation = glGetUniformLocation(g_glslProgram, "rotationAngle");
+    glUniform1f(rotation, rotationAngle);   
 	
 	//--- Geometry ---//
 	// 1rst attribute buffer : vertices
