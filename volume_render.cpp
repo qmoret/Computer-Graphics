@@ -71,6 +71,7 @@ GLuint vertexbuffer;
 GLuint uvbuffer;
 // This will identify the textures (volume and normals)
 GLuint textureVolumeID;
+GLuint textureNormalsID;
 
 /*---------------------- Shaders -------------------*/
 GLuint g_glslProgram;
@@ -171,6 +172,13 @@ void mainRender()
 	glUniform1i(TexVolumeID, 0); 
 	
 	// Same for the normals, in texture unit 1
+	// Get a handle for our "myTextureSamplerVolume" uniform
+	GLuint TexNormalsID  = glGetUniformLocation(g_glslProgram, "myTextureSamplerNormals");
+	// Bind our texture in Texture Unit 1
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureNormalsID);
+	// Set our "myTextureSamplerNormals" sampler to user Texture Unit 1
+	glUniform1i(TexNormalsID, 1); 
 
 	// Send the user-controled variables
     GLuint rotation = glGetUniformLocation(g_glslProgram, "rotationAngle");
@@ -332,11 +340,7 @@ void loadTexture()
     glBindTexture(GL_TEXTURE_2D, textureVolumeID);
     // Give the image to OpenGL
     glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, dataVolume);
-    // Poor filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    
-    
+
     
     //-------------------------------------------------------------------------------------------//
     // Compute the normal vector N = -(Gx,Gy,Gz)/Norm(Gx,Gy,Gz) at each voxel and store it as a color texture 
@@ -356,10 +360,18 @@ void loadTexture()
     unsigned char * dataNormals = new unsigned char[width*height*3];
     
     //Compute normal from gradient for each voxel (x,y) of each slice z, store it as a color in dataNormals
-    // ...
+
     
     // Create an OpenGL texture from dataNormals
-    // ...
+    //glGenTextures(1, &textureNormalsID);
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	//glBindTexture(GL_TEXTURE_2D, textureNormalsID);
+	// Give the image to OpenGL
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, dataNormals);
+
+    // Poor filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     
     
     delete[] dataVolume;

@@ -5,6 +5,7 @@ in vec2 fragmentUV;
 
 // Values that stay constant
 uniform sampler2D myTextureSamplerVolume;
+uniform sampler2D myTextureSamplerNormals;
 uniform float rotationAngle;
 uniform float isoValue;
 
@@ -127,16 +128,10 @@ void main()
         color = vec3(1.,1.,1.);
       }
 
-/*
-     //Ray marching until density above a threshold, display iso-surface normals
-     //...
-*/
+      //Ray marching until density above a threshold, display iso-surface normals
 
-  
-/* 
-    //Ray marching until density above a threshold, display shaded iso-surface
-    //...
-*/
+
+      //Ray marching until density above a threshold, display shaded iso-surface
 
 
 }
